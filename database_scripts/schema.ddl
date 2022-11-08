@@ -38,3 +38,16 @@ CREATE TABLE authoredBy (
     FOREIGN KEY (PaperID) REFERENCES Papers(PaperID),
     FOREIGN KEY (AuthoredByID) REFERENCES Authors(AuthorID)
 );
+
+CREATE TABLE Affiliations (
+    AffiliationID int primary key auto_increment,
+    Name varchar(255) NOT NULL
+);
+
+CREATE TABLE affiliatedTo (
+    AuthorID varchar(255),
+    AffiliationID int,
+    PRIMARY KEY (AuthorID, AffiliationID),
+    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID),
+    FOREIGN KEY (AffiliationID) REFERENCES Affiliations(AffiliationID)
+);
