@@ -198,4 +198,6 @@ xkit==0.0.0
 xmltodict==0.13.0
 zipp==1.0.0
 
-selenium~=4.5.0
+selenium~=4.6.0
+torch~=1.13.1
+dgl~=0.9.1.post1
