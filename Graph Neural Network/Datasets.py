@@ -28,11 +28,13 @@ class PaperDataset(DGLDataset):
             node_labels = torch.tensor(feature_vector, dtype=torch.int32)
         else:
             node_labels = torch.from_numpy(self.nodes_data["AuthorID"].to_numpy())
-        node_features = torch.randn(len(node_labels), 1)
+        #node_features = torch.zeros(len(node_labels), 1)
+        node_features = node_labels
+        #node_features[:self.training_set_index] = torch.zeros(self.training_set_index, node_labels.shape[1])
 
         edges_src = torch.from_numpy(self.edges_data['ReferenceID'].astype(int).to_numpy())
         edges_dst = torch.from_numpy(self.edges_data['PaperID'].astype(int).to_numpy())
-        print(len(node_labels))
+
         self.graph = dgl.graph((edges_src, edges_dst), num_nodes=len(node_labels))
         self.graph.ndata['feat'] = node_features
         self.graph.ndata['label'] = node_labels
@@ -43,7 +45,9 @@ class PaperDataset(DGLDataset):
 
         for val_in in self.val_index:
             val_mask[int(val_in)] = True
+            node_features[int(val_in)] = torch.zeros(node_labels.shape[1])
 
+        #train_mask = torch.zeros(n_nodes, dtype=torch.bool)
         train_mask = np.invert(val_mask).type(torch.bool)
         train_mask[self.training_set_index:] = False
 
@@ -135,3 +139,5 @@ class PaperDataset2(DGLDataset):
 
     def __len__(self):
         return 1
+
+
