@@ -1,0 +1,60 @@
+#Fetch all universities with aliases
+
+SELECT ?university ?universityLabel ?alias
+WHERE {
+  ?university wdt:P31/wdt:P279* wd:Q3918.
+  OPTIONAL { ?university skos:altLabel ?alias. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
+
+# Fetch universities in different languages
+
+SELECT ?university ?universityLabel ?alias
+WHERE {
+  ?university wdt:P31 wd:Q3918.
+  OPTIONAL { ?university skos:altLabel ?alias. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "all". }
+}
+
+# University Facilities
+
+SELECT distinct ?organization ?organizationLabel ?affiliatedUniversity ?alias ?affiliatedUniversityLabel
+WHERE
+{
+  {
+  ?organization wdt:P31/wdt:P279* wd:Q13226383. #Q16519632
+  ?affiliatedUniversity wdt:P31/wdt:P279* wd:Q3918.
+  ?organization wdt:P749 ?affiliatedUniversity.
+
+  ?organization rdfs:label ?organizationLabel.
+  FILTER (LANG(?organizationLabel) = "en").
+  OPTIONAL {
+    ?organization skos:altLabel ?alias.
+    FILTER (LANG(?alias) = "en")
+  }
+  ?affiliatedUniversity rdfs:label ?affiliatedUniversityLabel.
+  FILTER (LANG(?affiliatedUniversityLabel) = "en").
+}
+
+# Fetch all companies
+
+SELECT ?company ?label
+WHERE
+{
+  ?company wdt:P31 wd:Q4830453.
+  ?company rdfs:label ?label.
+  FILTER (LANG(?label) = "en").
+}
+
+# Fetch all companies' subsidiaries
+
+SELECT ?companyLabel ?subsidiaryLabel
+WHERE
+{
+  ?company wdt:P31 wd:Q4830453.
+  ?subsidiary wdt:P749 ?company.
+  ?company rdfs:label ?companyLabel.
+  FILTER (LANG(?companyLabel) = "en").
+  ?subsidiary rdfs:label ?subsidiaryLabel.
+  FILTER (LANG(?subsidiaryLabel) = "en").
+}

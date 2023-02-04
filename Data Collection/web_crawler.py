@@ -184,7 +184,11 @@ class Crawler:
 
         for node in soup.find_all("div", {"class": "authors-accordion-container"}):
             all_text = node.findAll(text=True)
-            all_affiliations.append((all_text[1], self.parse_affiliation(all_text[7])))
+            all_text = list(filter(lambda x: x.strip(), all_text))
+            affiliation = ""
+            if len(all_text) > 1:
+                affiliation = all_text[1]
+            all_affiliations.append((all_text[0], affiliation))
 
         return all_affiliations
 
@@ -246,7 +250,7 @@ class Crawler:
         affiliation_refs = {}
         all_affiliations = []
         try:
-            for node in author_div.find_all("a", {"class": "author"}):
+            for node in author_div.find_all("button", {"class": "author"}):
                 author_information = node.findAll(text=True)
                 name = " ".join(author_information[:2])
                 refs = [ref for ref in author_information[2:] if str.isalpha(ref) and len(ref) == 1]
@@ -525,7 +529,8 @@ class Crawler:
         split_affiliation = affiliation.split(",")
         if len(split_affiliation) == 1:
             return affiliation
-        return ",".join(split_affiliation[0:-1])
+        #return ",".join(split_affiliation[0:-1])
+        return affiliation
 
 
 
